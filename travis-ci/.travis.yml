@@ -1,0 +1,15 @@
+sudo: false
+dist: trusty
+
+env:
+  - DATE=`date +"%Y-%m-%d-%H%M"`
+
+before_install:
+  - wget https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/$VERACODE_WRAPPER_VERSION/vosp-api-wrappers-java-$VERACODE_WRAPPER_VERSION.jar
+  - sha1sum -c <<< "$VERACODE_WRAPPER_SHA1 vosp-api-wrappers-java-$VERACODE_WRAPPER_VERSION.jar"
+  
+script:
+  - zip -r veracode.zip *.py
+  - java -jar vosp-api-wrappers-java-$VERACODE_WRAPPER_VERSION.jar -vid $TEAM_ANALYSISCENTER_ID
+    -vkey $TEAM_ANALYSISCENTER_KEY -action uploadandscan -appname $TRAVIS_REPO_SLUG -createprofile true
+    -filepath veracode.zip -version "job $TRAVIS_JOB_NUMBER on $DATE"
