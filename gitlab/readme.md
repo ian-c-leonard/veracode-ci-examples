@@ -9,3 +9,7 @@ VERACODE_WRAPPER_VERSION 18.4.5.1
 ```
 
 The lastest wrapper version can be found on [maven.org](https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/)
+
+## Example Project
+
+An example project can be found at [gitlab.com](https://gitlab.com/ctcampbell/veracode-gitlab-example)
