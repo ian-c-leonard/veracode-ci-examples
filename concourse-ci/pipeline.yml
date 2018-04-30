@@ -1,0 +1,57 @@
+---
+resources:
+- name: veracode-ci-examples
+  type: git
+  source:
+    uri: https://github.com/ctcampbell/veracode-ci-examples.git
+    branch: master
+
+- name: veracode-flask-example
+  type: git
+  source:
+    uri: https://github.com/ctcampbell/veracode-flask-example.git
+    branch: master
+    
+- name: my-task-image
+  type: docker-image
+  source:
+    repository: openjdk
+    tag: "9-jre-slim"
+
+jobs:
+- name: job-build-task-image
+  plan:
+  - get: veracode-ci-examples
+  - get: veracode-flask-example
+  - put: my-task-image
+    params: {build: veracode-ci-examples/concourse-ci}
+
+- name: job-scan-with-veracode
+  plan:
+  - get: veracode-flask-example
+    passed: [job-build-task-image]
+  - get: my-task-image
+    passed: [job-build-task-image]
+  - task: package
+    image: my-task-image
+    config:
+      platform: linux
+      outputs:
+      - name: project-zip
+      run:
+        path: zip
+        args: ["-r", "veracode.zip", "veracode-flask-example/*.py"]
+  - task: scan-with-veracode
+    image: my-task-image
+    config:
+      platform: linux
+      inputs:
+      - name: project-zip  
+      run:
+        path: java
+        args: ["-jar", "veracode-wrapper.jar", "-vid", "((TEAM_ANALYSISCENTER_ID))", "-vkey", ((TEAM_ANALYSISCENTER_KEY)), "-action", "uploadandscan", "-appname", ((PROJECT_NAME)), "-createprofile true", "-filepath", "project-zip/veracode.zip", "-version", ((VERSION_NAME))]
+      params:
+        TEAM_ANALYSISCENTER_ID: ((TEAM_ANALYSISCENTER_ID))
+        TEAM_ANALYSISCENTER_KEY: ((TEAM_ANALYSISCENTER_KEY))
+        PROJECT_NAME: ((PROJECT_NAME))
+        VERSION_NAME: ((VERSION_NAME))
