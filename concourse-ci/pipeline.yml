@@ -34,7 +34,7 @@ jobs:
       inputs:
       - name: project-zip  
       run:
-        path: /veracode/uploadandscan-git.sh
+        path: /veracode/veracode-ci-examples/uploadandscan.sh
         args: [((TEAM_ANALYSISCENTER_ID)), ((TEAM_ANALYSISCENTER_KEY)), ((PROJECT_NAME)), "project-zip/veracode.zip"]
       params:
         TEAM_ANALYSISCENTER_ID:
