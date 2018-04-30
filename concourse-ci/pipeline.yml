@@ -22,14 +22,12 @@ jobs:
 - name: job-build-task-image
   plan:
   - get: veracode-ci-examples
-  - get: veracode-flask-example
   - put: my-task-image
     params: {build: veracode-ci-examples/concourse-ci}
 
 - name: job-scan-with-veracode
   plan:
   - get: veracode-flask-example
-    passed: [job-build-task-image]
   - get: my-task-image
     passed: [job-build-task-image]
   - task: package
