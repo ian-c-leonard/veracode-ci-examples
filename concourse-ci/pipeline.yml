@@ -34,10 +34,9 @@ jobs:
       inputs:
       - name: project-zip  
       run:
-        path: java
-        args: ["-jar", "--add-modules", "java.se.ee", "/veracode-wrapper.jar", "-vid", ((TEAM_ANALYSISCENTER_ID)), "-vkey", ((TEAM_ANALYSISCENTER_KEY)), "-action", "uploadandscan", "-appname", ((PROJECT_NAME)), "-createprofile", "true", "-filepath", "project-zip/veracode.zip", "-version", ((VERSION_NAME))]
+        path: /veracode/uploadandscan-git.sh
+        args: [((TEAM_ANALYSISCENTER_ID)), ((TEAM_ANALYSISCENTER_KEY)), ((PROJECT_NAME)), "project-zip/veracode.zip"]
       params:
         TEAM_ANALYSISCENTER_ID:
         TEAM_ANALYSISCENTER_KEY:
         PROJECT_NAME:
-        VERSION_NAME:
