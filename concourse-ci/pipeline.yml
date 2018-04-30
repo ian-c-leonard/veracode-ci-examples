@@ -1,55 +1,43 @@
 ---
 resources:
-- name: veracode-ci-examples
-  type: git
-  source:
-    uri: https://github.com/ctcampbell/veracode-ci-examples.git
-    branch: master
-
 - name: veracode-flask-example
   type: git
   source:
     uri: https://github.com/ctcampbell/veracode-flask-example.git
     branch: master
     
-- name: my-task-image
+- name: veracode-image
   type: docker-image
   source:
-    repository: openjdk
-    tag: "9-jre-slim"
+    repository: ctcampbelldocker/veracode-ci-examples
 
 jobs:
-- name: job-build-task-image
-  plan:
-  - get: veracode-ci-examples
-  - put: my-task-image
-    params: {build: veracode-ci-examples/concourse-ci}
-
-- name: job-scan-with-veracode
+- name: scan-with-veracode
   plan:
   - get: veracode-flask-example
-  - get: my-task-image
-    passed: [job-build-task-image]
+  - get: veracode-image
   - task: package
-    image: my-task-image
+    image: veracode-image
     config:
       platform: linux
+      inputs:
+      - name: veracode-flask-example
       outputs:
       - name: project-zip
       run:
-        path: zip
-        args: ["-r", "veracode.zip", "veracode-flask-example/*.py"]
-  - task: scan-with-veracode
-    image: my-task-image
+        path: git
+        args: ["--git-dir=veracode-flask-example/.git", "archive", "-o", "project-zip/veracode.zip", "HEAD"]
+  - task: upload-and-scan
+    image: veracode-image
     config:
       platform: linux
       inputs:
       - name: project-zip  
       run:
         path: java
-        args: ["-jar", "veracode-wrapper.jar", "-vid", "((TEAM_ANALYSISCENTER_ID))", "-vkey", ((TEAM_ANALYSISCENTER_KEY)), "-action", "uploadandscan", "-appname", ((PROJECT_NAME)), "-createprofile true", "-filepath", "project-zip/veracode.zip", "-version", ((VERSION_NAME))]
+        args: ["-jar", "--add-modules", "java.se.ee", "/veracode-wrapper.jar", "-vid", ((TEAM_ANALYSISCENTER_ID)), "-vkey", ((TEAM_ANALYSISCENTER_KEY)), "-action", "uploadandscan", "-appname", ((PROJECT_NAME)), "-createprofile", "true", "-filepath", "project-zip/veracode.zip", "-version", ((VERSION_NAME))]
       params:
-        TEAM_ANALYSISCENTER_ID: ((TEAM_ANALYSISCENTER_ID))
-        TEAM_ANALYSISCENTER_KEY: ((TEAM_ANALYSISCENTER_KEY))
-        PROJECT_NAME: ((PROJECT_NAME))
-        VERSION_NAME: ((VERSION_NAME))
+        TEAM_ANALYSISCENTER_ID:
+        TEAM_ANALYSISCENTER_KEY:
+        PROJECT_NAME:
+        VERSION_NAME:
