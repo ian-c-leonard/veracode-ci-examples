@@ -27,7 +27,7 @@ jobs:
       run:
         path: git
         args: ["--git-dir=veracode-flask-example/.git", "archive", "-o", "project-zip/veracode.zip", "HEAD"]
-  - task: upload-and-scan
+  - task: veracode-policy-scan
     image: veracode-image
     config:
       platform: linux
