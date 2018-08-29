@@ -1,7 +1,7 @@
 FROM maven:3-jdk-10-slim
 
 RUN apt-get update
-RUN apt-get install -y git jq
+RUN apt-get install -y zip git jq
 
 RUN mkdir /veracode
 
