@@ -1,7 +1,7 @@
 image: ctcampbelldocker/veracode-ci-examples
 
 stages:
-    - build
+    - archive
     - scan
 
 package:
