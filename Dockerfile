@@ -1,9 +1,7 @@
 FROM openjdk:10
 
-RUN apt-get update
-RUN apt-get install -y zip jq
-
-RUN mkdir /veracode
+RUN apt-get update \
+&& apt-get install -y zip jq
 
 WORKDIR /veracode
 
