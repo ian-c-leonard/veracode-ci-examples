@@ -7,5 +7,5 @@ before_install:
 script:
   - zip -r veracode.zip /
   - java -jar vosp-api-wrappers-java-$VERACODE_WRAPPER_VERSION.jar -vid $TEAM_ANALYSISCENTER_ID
-    -vkey $TEAM_ANALYSISCENTER_KEY -action uploadandscan -appname $TRAVIS_REPO_SLUG -createprofile true
-    -filepath veracode.zip -version "job $TRAVIS_JOB_NUMBER on $DATE"
+    -vkey $TEAM_ANALYSISCENTER_KEY -action uploadandscan -appname $VERACODE_PROJECT_NAME -createprofile false
+    -filepath veracode.zip -version "$TRAVIS_JOB_NUMBER"
