@@ -8,4 +8,4 @@ script:
   - zip -r veracode.zip /
   - java -jar vosp-api-wrappers-java-$VERACODE_WRAPPER_VERSION.jar -vid $TEAM_ANALYSISCENTER_ID
     -vkey $TEAM_ANALYSISCENTER_KEY -action uploadandscan -appname $VERACODE_PROJECT_NAME -createprofile false
-    -filepath veracode.zip -version "$TRAVIS_JOB_NUMBER"
+    -autoscan true -filepath veracode.zip -version "$TRAVIS_JOB_NUMBER"
